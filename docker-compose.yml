@@ -1,7 +1,6 @@
-version: "3.3"
 
 # Relaying ACME HTTP requests to internal servers which handle ACME on their own.
-# Allows port 80 forwarding to this single docker-container as an isolated relay-reverse-proxy-server
+# Allows port 80 GET-well-known-Request forwarding to this single docker-container as an isolated relay-reverse-proxy-server.
 
 # Format Caddyfile:
 # docker-compose run acmerelay caddy --config /etc/caddy/Caddyfile fmt --overwrite
