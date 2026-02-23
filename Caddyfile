@@ -1,0 +1,47 @@
+# HTTP listener (ACME HTTP-01)
+:80 {
+	# ----------------------------------------------------
+	# 1️. IP allowlist (Let's Encrypt Validator Ranges)
+	# ----------------------------------------------------
+	@letsencrypt_ips {
+		remote_ip 64.78.149.164/30
+		remote_ip 66.133.109.36/32
+		remote_ip 66.133.109.37/32
+		remote_ip 23.178.112.0/24
+		remote_ip 172.65.32.248/32
+	}
+
+	# ----------------------------------------------------
+	# 2️. ACME Request URL validation
+	# ----------------------------------------------------
+	@acme_path {
+		method GET
+		path_regexp acme ^/\.well-known/acme-challenge/.+$
+	}
+
+	# ----------------------------------------------------
+	# 3️. Host Header RegExp validation from .env
+	# This is HTTP port 80, so we do not need SNI module
+	# ----------------------------------------------------
+	@host_allowed {
+		header_regexp hostname Host {$ALLOWED_HOST_REGEX}
+	}
+
+	# ----------------------------------------------------
+	# 4. Reverse Proxy relay using public/private DNS
+	# ----------------------------------------------------
+	route {
+		handle @letsencrypt_ips {
+			handle @acme_path {
+				handle @host_allowed {
+					reverse_proxy {re.hostname.1}:80
+				}
+			}
+		}
+
+		# ----------------------------------------------------
+		# 5. Fallback to HTTPS redirect
+		# ----------------------------------------------------
+		redir https://{host}{uri} 308
+	}
+}
