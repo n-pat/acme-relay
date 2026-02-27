@@ -11,6 +11,10 @@ services:
     container_name: acmerelay
     restart: unless-stopped
 
+    # Internal DNS overrides for names that do not exist or if specific network has to be used
+    #extra_hosts:
+    #  - "customer1.example.com:172.20.123.123"
+    #  - "customer2.example.com:172.20.234.234"
     networks:
       dmz:
     #ports:

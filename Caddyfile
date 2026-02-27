@@ -34,7 +34,7 @@
 		handle @letsencrypt_ips {
 			handle @acme_path {
 				handle @host_allowed {
-					reverse_proxy {re.hostname.1}:80
+					reverse_proxy {http.regexp.hostname.1}:80
 				}
 			}
 		}
@@ -42,6 +42,7 @@
 		# ----------------------------------------------------
 		# 5. Fallback to HTTPS redirect
 		# ----------------------------------------------------
+		#respond "not served" 404
 		redir https://{host}{uri} 308
 	}
 }
